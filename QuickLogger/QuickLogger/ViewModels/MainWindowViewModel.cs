@@ -33,6 +33,41 @@ namespace QuickLogger.ViewModels
             }
         }
 
+        private string _prefix;
+        public string Prefix
+        {
+            get
+            {
+                return _prefix;
+            }
+            set
+            {
+                if (value != _prefix)
+                {
+                    _prefix = value;
+                    RaisePropertyChanged(() => Prefix);
+                }
+            }
+        }
+
+        private bool _usePrefis = false;
+        public bool UsePrefix
+        {
+            get
+            {
+                return _usePrefis;
+            }
+
+            set
+            {
+                if (_usePrefis != value)
+                {
+                    _usePrefis = value;
+                    RaisePropertyChanged(() => UsePrefix);
+                }
+            }
+        }
+
         public ICommand LogItCommand { get; set; }
 
         public ICommand OpenFileCommand { get; set; }
@@ -46,12 +81,13 @@ namespace QuickLogger.ViewModels
         private void LogItExecute()
         {
             string inputText = InputText; //copy
+            string prefix = Prefix;//copy
 
             if (!string.IsNullOrWhiteSpace(inputText))
             {
                 using (StreamWriter sw = File.AppendText(_filePath))
                 {
-                    sw.WriteLine("{0}: {1}", DateTime.Now, inputText);
+                    sw.WriteLine("{0}: {1} {2}", DateTime.Now, UsePrefix ? Prefix : string.Empty, inputText);
                 }
 
                 InputText = string.Empty;

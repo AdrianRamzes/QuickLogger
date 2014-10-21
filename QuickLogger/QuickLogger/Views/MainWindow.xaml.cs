@@ -20,18 +20,31 @@ namespace QuickLogger.Views
     /// </summary>
     public partial class MainWindow : Window
     {
+        System.Windows.Forms.NotifyIcon _notifyIcon;
+
         public MainWindow()
         {
-            InitializeComponent(); 
-            System.Windows.Forms.NotifyIcon ni = new System.Windows.Forms.NotifyIcon();
-            ni.Icon = new System.Drawing.Icon("Main.ico");
-            ni.Visible = true;
-            ni.DoubleClick +=
-                delegate(object sender, EventArgs args)
-                {
-                    this.Show();
-                    this.WindowState = WindowState.Normal;
-                };
+            InitializeComponent();
+            _notifyIcon = new System.Windows.Forms.NotifyIcon();
+            _notifyIcon.Icon = new System.Drawing.Icon("Main.ico");
+            _notifyIcon.Visible = true;
+            _notifyIcon.Click += SetWindowStateToNormal;
+            _notifyIcon.DoubleClick += SetWindowStateToNormal;
+            _notifyIcon.MouseDown += NotifyIcon_MouseDown;
+        }
+
+        void SetWindowStateToNormal(object sender, EventArgs e)
+        {
+            if (this.WindowState == System.Windows.WindowState.Normal)
+            {
+                this.WindowState = WindowState.Minimized;
+            }
+            else
+            {
+                this.Show();
+                this.WindowState = WindowState.Normal;
+            }
+
         }
 
         protected override void OnStateChanged(EventArgs e)
@@ -40,6 +53,34 @@ namespace QuickLogger.Views
                 this.Hide();
 
             base.OnStateChanged(e);
+        }
+
+        private void LogiItButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = System.Windows.WindowState.Minimized;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+
+            this.WindowState = System.Windows.WindowState.Minimized;
+        }
+
+        void NotifyIcon_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                var menu = this.FindResource("NotifierContextMenu") as ContextMenu;
+                menu.IsOpen = true;
+            }
+        }
+
+        protected void Menu_Exit(object sender, RoutedEventArgs e)
+        {
+            _notifyIcon.Visible = false;
+            this.Close();
+            Application.Current.Shutdown();
         }
     }
 }

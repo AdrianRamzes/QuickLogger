@@ -2,14 +2,24 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:viewModels="clr-namespace:QuickLogger.ViewModels"
-        Title="Logger" Height="112" Width="525" ResizeMode="CanMinimize" FocusManager.FocusedElement="{Binding ElementName=v_TextBox}">
+        Title="Logger" Height="112" Width="525" 
+        ResizeMode="CanMinimize" 
+        FocusManager.FocusedElement="{Binding ElementName=v_TextBox}" 
+        Closing="Window_Closing">
     <Window.Resources>
         <viewModels:MainWindowViewModel x:Key="MainViewModel" />
+        <ContextMenu x:Key="NotifierContextMenu"
+                    Placement="MousePoint">
+            <MenuItem Header="Exit" Click="Menu_Exit"/>
+        </ContextMenu>
     </Window.Resources>
     <Grid DataContext="{StaticResource MainViewModel}" FocusManager.FocusedElement="{Binding ElementName=v_TextBox}">
         <Label HorizontalAlignment="Left" Content="Text:" VerticalAlignment="Top"/>
         <TextBox Name="v_TextBox" HorizontalAlignment="Stretch" Margin="40,5,40,0" VerticalAlignment="Top" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"/>
-        <Button HorizontalAlignment="Center" IsDefault="True" VerticalAlignment="Center" Content="Log It!" Command="{Binding LogItCommand}" FocusManager.FocusedElement="{Binding ElementName=v_TextBox}"/>
+        <Button Click="LogiItButton_Click" HorizontalAlignment="Center" IsDefault="True" VerticalAlignment="Center" Content="Log It!" Command="{Binding LogItCommand}" FocusManager.FocusedElement="{Binding ElementName=v_TextBox}"/>
         <Button HorizontalAlignment="Right" Margin="10,10,40,10" VerticalAlignment="Center" Content="Open log ile" Command="{Binding OpenFileCommand}" FocusManager.FocusedElement="{Binding ElementName=v_TextBox}"/>
+        <Label Content="Prefix:" VerticalAlignment="Bottom" IsEnabled="{Binding ElementName=v_CheckBox_Prefix, Path=IsChecked}"/>
+        <TextBox Text="{Binding Prefix, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Width="100" HorizontalAlignment="Left" Margin="45,0,0,5" IsEnabled="{Binding ElementName=v_CheckBox_Prefix, Path=IsChecked}"/>
+        <CheckBox Name="v_CheckBox_Prefix" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="150,0,0,7" IsChecked="{Binding UsePrefix}"/>
     </Grid>
 </Window>
