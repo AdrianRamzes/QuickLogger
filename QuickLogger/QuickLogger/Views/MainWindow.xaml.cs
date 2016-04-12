@@ -22,6 +22,8 @@ namespace QuickLogger.Views
     {
         System.Windows.Forms.NotifyIcon _notifyIcon;
 
+        private HotKey _hotkey;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -31,9 +33,22 @@ namespace QuickLogger.Views
             _notifyIcon.Click += SetWindowStateToNormal;
             _notifyIcon.DoubleClick += SetWindowStateToNormal;
             _notifyIcon.MouseDown += NotifyIcon_MouseDown;
+
+            _hotkey = new HotKey(ModifierKeys.Control, System.Windows.Forms.Keys.Q, this);
+            _hotkey.HotKeyPressed += _hotkey_HotKeyPressed;
+        }
+
+        private void _hotkey_HotKeyPressed(HotKey obj)
+        {
+            ToggleWindowState();
         }
 
         void SetWindowStateToNormal(object sender, EventArgs e)
+        {
+            ToggleWindowState();
+        }
+
+        private void ToggleWindowState()
         {
             if (this.WindowState == System.Windows.WindowState.Normal)
             {
@@ -44,7 +59,6 @@ namespace QuickLogger.Views
                 this.Show();
                 this.WindowState = WindowState.Normal;
             }
-
         }
 
         protected override void OnStateChanged(EventArgs e)
